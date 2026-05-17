@@ -5,7 +5,13 @@ import { z } from "zod";
 
 export const runtime = "nodejs";
 
-const statuses = ["PENDING", "PREPARING", "READY", "DELIVERED", "CANCELLED"] as const;
+const statuses = [
+  "ORDER_RECEIVED",
+  "PREPARING",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
+  "CANCELLED",
+] as const;
 
 const statusSchema = z.object({
   status: z.enum(statuses),

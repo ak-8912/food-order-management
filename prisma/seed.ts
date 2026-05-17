@@ -21,69 +21,57 @@ async function main() {
         name: "Margherita Pizza",
         description: "Classic cheese pizza",
         price: 299,
-        image: "/pizza.jpg",
+        image: "/food/pizza.jpg",
       },
       {
         name: "Veg Burger",
         description: "Loaded veg burger",
         price: 199,
-        image: "/burger.jpg",
+        image: "/food/burger.jpg",
       },
       // --- STARTERS & APPETIZERS ---
       {
         name: "Garlic Bread sticks",
         description: "Baked dough sticks brushed with garlic butter and herbs",
         price: 129,
-        image: "/garlic_bread.jpg",
+        image: "/food/garlic_bread.jpg",
       },
       {
         name: "French Fries",
         description: "Crispy golden potato fries lightly salted",
         price: 99,
-        image: "/fries.jpg",
+        image: "/food/fries.jpg",
       },
       {
         name: "Mozzarella Sticks",
         description: "Deep-fried cheesy goodness served with marinara sauce",
         price: 179,
-        image: "/mozzarella_sticks.jpg",
-      },
-      {
-        name: "Chicken Wings",
-        description: "Spicy buffalo chicken wings with blue cheese dip",
-        price: 249,
-        image: "/chicken_wings.jpg",
+        image: "/food/mozzarella_sticks.jpg",
       },
       {
         name: "Bruschetta",
         description:
           "Toasted bread topped with tomatoes, garlic, and olive oil",
         price: 149,
-        image: "/bruschetta.jpg",
+        image: "/food/bruschetta.jpg",
       },
       {
         name: "Spring Rolls",
         description: "Crispy pastry sheets filled with spiced vegetables",
         price: 139,
-        image: "/spring_rolls.jpg",
+        image: "/food/spring_rolls.jpg",
       },
       {
         name: "Paneer Tikka",
         description: "Marinated cottage cheese cubes grilled in a tandoor",
         price: 229,
-        image: "/paneer_tikka.jpg",
-      },
-      {
-        name: "Chicken Nuggets",
-        description: "Tender chicken bites fried to a crisp golden brown",
-        price: 169,
-        image: "/chicken_nuggets.jpg",
+        image: "/food/paneer_tikka.jpg",
       },
       {
         name: "Onion Rings",
         description: "Batter-fried crispy onion rings served with dip",
         price: 119,
-        image: "/onion_rings.jpg",
+        image: "/food/onion_rings.jpg",
       },
 
       // --- MAIN COURSES ---
@@ -91,84 +79,57 @@ async function main() {
         name: "Pepperoni Pizza",
         description: "Classic pizza topped with spicy pepperoni and mozzarella",
         price: 399,
-        image: "/pepperoni_pizza.jpg",
-      },
-      {
-        name: "BBQ Chicken Burger",
-        description: "Grilled chicken breast slathered in smoky BBQ sauce",
-        price: 249,
-        image: "/chicken_burger.jpg",
+        image: "/food/pepperoni_pizza.jpg",
       },
       {
         name: "Pasta Alfredo",
         description: "Fettuccine tossed in rich, creamy parmesan cheese sauce",
         price: 289,
-        image: "/pasta_alfredo.jpg",
+        image: "/food/pasta_alfredo.jpg",
       },
       {
         name: "Pasta Arrabbiata",
         description: "Spicy tomato sauce pasta with garlic and chili flakes",
         price: 269,
-        image: "/pasta_arrabbiata.jpg",
-      },
-      {
-        name: "Chicken Biryani",
-        description:
-          "Fragrant basmati rice cooked with spiced chicken and herbs",
-        price: 329,
-        image: "/chicken_biryani.jpg",
+        image: "/food/pasta_arrabbiata.jpg",
       },
       {
         name: "Paneer Butter Masala",
         description: "Cottage cheese cubes in a rich and creamy tomato gravy",
         price: 279,
-        image: "/paneer_butter_masala.jpg",
+        image: "/food/paneer_butter_masala.jpg",
       },
       {
         name: "Dal Makhani",
         description: "Slow-cooked black lentils with cream and butter",
         price: 219,
-        image: "/dal_makhani.jpg",
-      },
-      {
-        name: "Grilled Salmon",
-        description: "Perfectly seared salmon fillet served with asparagus",
-        price: 499,
-        image: "/grilled_salmon.jpg",
+        image: "/food/dal_makhani.jpg",
       },
       {
         name: "Vegetable Lasagna",
         description: "Layered pasta with roasted veggies, sauce, and cheese",
         price: 319,
-        image: "/veg_lasagna.jpg",
+        image: "/food/veg_lasagna.jpg",
       },
-      {
-        name: "Club Sandwich",
-        description:
-          "Triple-decker sandwich loaded with chicken, bacon, and egg",
-        price: 229,
-        image: "/club_sandwich.jpg",
-      },
-
       // --- SALADS & SOUPS ---
       {
         name: "Caesar Salad",
         description: "Crisp romaine lettuce, croutons, and parmesan dressing",
         price: 189,
-        image: "/caesar_salad.jpg",
+        image: "/food/caesar_salad.jpg",
       },
       {
         name: "Greek Salad",
         description:
           "Cucumbers, tomatoes, olives, and feta cheese in olive oil",
         price: 199,
-        image: "/greek_salad.jpg",
+        image: "/food/greek_salad.jpg",
       },
       {
         name: "Tomato Basil Soup",
         description: "Creamy roasted tomato soup garnished with fresh basil",
         price: 129,
-        image: "/tomato_soup.jpg",
+        image: "/food/tomato_soup.jpg",
       },
 
       // --- DESSERTS ---
@@ -176,38 +137,38 @@ async function main() {
         name: "Chocolate Brownie",
         description: "Rich, fudgy chocolate brownie served warm",
         price: 149,
-        image: "/brownie.jpg",
+        image: "/food/brownie.jpg",
       },
       {
         name: "New York Cheesecake",
         description: "Classic creamy cheesecake with a graham cracker crust",
         price: 199,
-        image: "/cheesecake.jpg",
+        image: "/food/cheesecake.jpg",
       },
       {
         name: "Tiramisu",
         description: "Coffee-flavoured Italian dessert layered with mascarpone",
         price: 219,
-        image: "/tiramisu.jpg",
+        image: "/food/tiramisu.jpg",
       },
       {
         name: "Apple Pie",
         description: "Warm pie crust filled with spiced apples",
         price: 159,
-        image: "/apple_pie.jpg",
+        image: "/food/apple_pie.jpg",
       },
       {
         name: "Churros",
         description:
           "Fried dough pastries dusted in cinnamon sugar with chocolate dip",
         price: 139,
-        image: "/churros.jpg",
+        image: "/food/churros.jpg",
       },
       {
         name: "Molten Lava Cake",
         description: "Decadent chocolate cake with a liquid chocolate center",
         price: 179,
-        image: "/lava_cake.jpg",
+        image: "/food/lava_cake.jpg",
       },
 
       // --- BEVERAGES ---
@@ -215,51 +176,51 @@ async function main() {
         name: "Iced Latte",
         description: "Chilled espresso blended with milk and ice",
         price: 149,
-        image: "/iced_latte.jpg",
+        image: "/food/iced_latte.jpg",
       },
       {
         name: "Mango Smoothie",
         description: "Creamy blend of fresh mangoes and yogurt",
         price: 169,
-        image: "/mango_smoothie.jpg",
+        image: "/food/mango_smoothie.jpg",
       },
       {
         name: "Virgin Mojito",
         description: "Refreshing mix of lime, mint, sugar, and club soda",
         price: 129,
-        image: "/mojito.jpg",
+        image: "/food/mojito.jpg",
       },
       {
         name: "Chocolate Milkshake",
         description:
           "Thick and creamy shake made with rich chocolate ice cream",
         price: 159,
-        image: "/chocolate_shake.jpg",
+        image: "/food/chocolate_shake.jpg",
       },
       {
         name: "Lemon Iced Tea",
         description: "Brewed black tea infused with lemon and served chilled",
         price: 119,
-        image: "/iced_tea.jpg",
+        image: "/food/iced_tea.jpg",
       },
       {
         name: "Hot Cappuccino",
         description: "Classic espresso shot topped with steamed milk foam",
         price: 139,
-        image: "/cappuccino.jpg",
+        image: "/food/cappuccino.jpg",
       },
       {
         name: "Berry Blast Mocktail",
         description:
           "A fizzy medley of strawberries, blueberries, and cranberries",
         price: 159,
-        image: "/berry_mocktail.jpg",
+        image: "/food/berry_mocktail.jpg",
       },
       {
         name: "Fresh Orange Juice",
         description: "100% pure squeezed oranges with no added sugar",
         price: 139,
-        image: "/orange_juice.jpg",
+        image: "/food/orange_juice.jpg",
       },
     ],
   });

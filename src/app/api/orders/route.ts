@@ -87,7 +87,7 @@ export async function POST(request: Request) {
         address,
         phone,
         total,
-        status: "PENDING",
+        status: "ORDER_RECEIVED",
         items: {
           create: menuItems.map((menuItem) => ({
             menuItemId: menuItem.id,
