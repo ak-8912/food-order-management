@@ -1,65 +1,125 @@
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
-export default function Home() {
+type HomeProps = {
+  searchParams: Promise<{
+    q?: string | string[];
+  }>;
+};
+
+function getQueryParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] ?? "" : value ?? "";
+}
+
+export default async function Home({ searchParams }: HomeProps) {
+  const query = getQueryParam((await searchParams).q).trim();
+
+  const menuItems = await prisma.menuItem.findMany({
+    where: query
+      ? {
+          name: {
+            contains: query,
+          },
+        }
+      : undefined,
+    orderBy: {
+      name: "asc",
+    },
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main className="min-h-screen bg-stone-50 px-4 py-8 text-zinc-950 sm:px-8">
+      <section className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+        <div className="flex flex-col gap-5 border-b border-zinc-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">
+              Food Order Management
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-normal text-zinc-950 sm:text-4xl">
+              Menu
+            </h1>
+            <p className="mt-2 max-w-2xl text-base text-zinc-600">
+              Search the menu by food name and quickly scan prices for new
+              orders.
+            </p>
+          </div>
+
+          <form action="/" className="flex w-full gap-2 sm:max-w-md">
+            <label className="sr-only" htmlFor="menu-search">
+              Search food by name
+            </label>
+            <input
+              id="menu-search"
+              name="q"
+              type="search"
+              defaultValue={query}
+              placeholder="Search food by name"
+              className="h-11 min-w-0 flex-1 rounded-md border border-zinc-300 bg-white px-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <button
+              type="submit"
+              className="h-11 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800"
+            >
+              Search
+            </button>
+          </form>
         </div>
-      </main>
-    </div>
+
+        <div className="flex items-center justify-between text-sm text-zinc-600">
+          <p>
+            {menuItems.length} item{menuItems.length === 1 ? "" : "s"}
+            {query ? ` matching "${query}"` : ""}
+          </p>
+          {query ? (
+            <Link
+              className="font-medium text-emerald-700 hover:text-emerald-900"
+              href="/"
+            >
+              Clear search
+            </Link>
+          ) : null}
+        </div>
+
+        {menuItems.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {menuItems.map((item) => (
+              <article
+                key={item.id}
+                className="overflow-hidden rounded-md border border-zinc-200 bg-white shadow-sm"
+              >
+                <div className="flex aspect-[4/3] items-center justify-center bg-emerald-50 text-5xl font-semibold text-emerald-800">
+                  {item.name.charAt(0)}
+                </div>
+                <div className="flex min-h-44 flex-col gap-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <h2 className="text-lg font-semibold text-zinc-950">
+                      {item.name}
+                    </h2>
+                    <p className="shrink-0 rounded-md bg-zinc-100 px-2 py-1 text-sm font-semibold text-zinc-900">
+                      ₹{item.price}
+                    </p>
+                  </div>
+                  <p className="text-sm leading-6 text-zinc-600">
+                    {item.description}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div
+            className="rounded-md border border-dashed border-zinc-300 bg-white p-8 text-center"
+            role="status"
+          >
+            <h2 className="text-lg font-semibold text-zinc-950">
+              No food items found
+            </h2>
+            <p className="mt-2 text-sm text-zinc-600">
+              Try another name or clear the search to view the full menu.
+            </p>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
