@@ -36,21 +36,25 @@ function getOrderSearchWhere(query: string): Prisma.OrderWhereInput | undefined 
     {
       customer: {
         contains: query,
+        mode: "insensitive",
       },
     },
     {
       phone: {
         contains: query,
+        mode: "insensitive",
       },
     },
     {
       address: {
         contains: query,
+        mode: "insensitive",
       },
     },
     {
       status: {
         contains: query,
+        mode: "insensitive",
       },
     },
     {
@@ -59,6 +63,7 @@ function getOrderSearchWhere(query: string): Prisma.OrderWhereInput | undefined 
           menuItem: {
             name: {
               contains: query,
+              mode: "insensitive",
             },
           },
         },

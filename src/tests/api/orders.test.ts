@@ -80,7 +80,7 @@ describe("orders API", () => {
         where: expect.objectContaining({
           OR: expect.arrayContaining([
             expect.objectContaining({
-              customer: { contains: "burger" },
+              customer: { contains: "burger", mode: "insensitive" },
             }),
           ]),
         }),

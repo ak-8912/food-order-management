@@ -19,6 +19,7 @@ export default async function Home({ searchParams }: HomeProps) {
       ? {
           name: {
             contains: query,
+            mode: "insensitive",
           },
         }
       : undefined,
