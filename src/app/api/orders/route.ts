@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { orderSchema } from "@/schemas/order-schema";
-import { NextResponse } from "next/server";
+import { type Prisma } from "@/generated/prisma/client";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -14,9 +15,80 @@ const createOrderSchema = orderSchema.extend({
   items: z.array(orderItemSchema).min(1, "At least one item is required."),
 });
 
-export async function GET() {
+const searchableStatuses = [
+  "ORDER_RECEIVED",
+  "PREPARING",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
+  "CANCELLED",
+];
+
+function getOrderSearchWhere(query: string): Prisma.OrderWhereInput | undefined {
+  if (!query) {
+    return undefined;
+  }
+
+  const statusMatches = searchableStatuses.filter((status) =>
+    status.replaceAll("_", " ").toLowerCase().includes(query.toLowerCase())
+  );
+  const numericQuery = Number(query);
+  const orFilters: Prisma.OrderWhereInput[] = [
+    {
+      customer: {
+        contains: query,
+      },
+    },
+    {
+      phone: {
+        contains: query,
+      },
+    },
+    {
+      address: {
+        contains: query,
+      },
+    },
+    {
+      status: {
+        contains: query,
+      },
+    },
+    {
+      items: {
+        some: {
+          menuItem: {
+            name: {
+              contains: query,
+            },
+          },
+        },
+      },
+    },
+  ];
+
+  if (Number.isInteger(numericQuery) && numericQuery > 0) {
+    orFilters.push({ id: numericQuery });
+  }
+
+  if (statusMatches.length > 0) {
+    orFilters.push({
+      status: {
+        in: statusMatches,
+      },
+    });
+  }
+
+  return {
+    OR: orFilters,
+  };
+}
+
+export async function GET(request: NextRequest) {
   try {
+    const query = request.nextUrl.searchParams.get("q")?.trim() ?? "";
+
     const orders = await prisma.order.findMany({
+      where: getOrderSearchWhere(query),
       include: {
         items: {
           include: {

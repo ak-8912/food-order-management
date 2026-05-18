@@ -53,7 +53,7 @@ export default async function OrdersPage() {
             </Button>
           </Stack>
 
-          <OrderHistoryList orders={orderViews} />
+          <OrderHistoryList initialOrders={orderViews} />
         </Stack>
       </Container>
     </Box>

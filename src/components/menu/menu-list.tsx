@@ -3,6 +3,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
+import { useQuery } from "@tanstack/react-query";
 import {
   Alert,
   Badge,
@@ -18,25 +19,53 @@ import {
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { useDebounce } from "@/hooks/use-debounce";
 import { useCartStore } from "@/store/cart-store";
 import { MenuGrid } from "./menu-grid";
 import type { MenuItemView } from "./menu-card";
 
 type MenuListProps = {
-  items: MenuItemView[];
-  query?: string;
+  initialItems: MenuItemView[];
+  initialQuery?: string;
 };
 
-export function MenuList({ items, query = "" }: MenuListProps) {
+async function fetchMenu(query: string, signal: AbortSignal) {
+  const searchParams = new URLSearchParams();
+
+  if (query) {
+    searchParams.set("q", query);
+  }
+
+  const response = await fetch(`/api/menu?${searchParams.toString()}`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch menu items.");
+  }
+
+  return (await response.json()) as MenuItemView[];
+}
+
+export function MenuList({ initialItems, initialQuery = "" }: MenuListProps) {
   const [cartOpen, setCartOpen] = useState(false);
+  const [query, setQuery] = useState(initialQuery);
+  const debouncedQuery = useDebounce(query.trim());
   const cartCount = useCartStore((state) =>
     state.items.reduce((total, item) => total + item.quantity, 0)
   );
+  const menuQuery = useQuery({
+    queryKey: ["menu", debouncedQuery],
+    queryFn: ({ signal }) => fetchMenu(debouncedQuery, signal),
+    initialData: debouncedQuery === initialQuery ? initialItems : undefined,
+    placeholderData: (previousData) => previousData,
+  });
+  const items = menuQuery.data ?? [];
 
   const resultLabel = useMemo(() => {
     const count = `${items.length} item${items.length === 1 ? "" : "s"}`;
-    return query ? `${count} matching "${query}"` : count;
-  }, [items.length, query]);
+    return debouncedQuery ? `${count} matching "${debouncedQuery}"` : count;
+  }, [debouncedQuery, items.length]);
 
   return (
     <>
@@ -84,16 +113,14 @@ export function MenuList({ items, query = "" }: MenuListProps) {
               </Box>
 
               <Stack
-                component="form"
-                action="/"
                 direction="row"
                 spacing={1}
                 sx={{ width: "100%", maxWidth: { md: 460 } }}
               >
                 <TextField
                   fullWidth
-                  defaultValue={query}
-                  name="q"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search food by name"
                   size="small"
                   slotProps={{
@@ -106,9 +133,6 @@ export function MenuList({ items, query = "" }: MenuListProps) {
                     },
                   }}
                 />
-                <Button type="submit" variant="contained">
-                  Search
-                </Button>
                 <IconButton
                   aria-label="Track order"
                   component={Link}
@@ -144,16 +168,20 @@ export function MenuList({ items, query = "" }: MenuListProps) {
               sx={{ alignItems: { xs: "stretch", sm: "center" }, justifyContent: "space-between" }}
             >
               <Typography color="text.secondary" variant="body2">
-                {resultLabel}
+                {menuQuery.isFetching ? "Searching..." : resultLabel}
               </Typography>
               {query ? (
-                <Button component={Link} href="/" size="small" variant="text">
+                <Button onClick={() => setQuery("")} size="small" variant="text">
                   Clear search
                 </Button>
               ) : null}
             </Stack>
 
-            {items.length > 0 ? (
+            {menuQuery.isError ? (
+              <Alert severity="error" variant="outlined">
+                We could not load the menu. Please try again.
+              </Alert>
+            ) : items.length > 0 ? (
               <MenuGrid items={items} />
             ) : (
               <Alert severity="info" variant="outlined">

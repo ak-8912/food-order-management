@@ -2,7 +2,9 @@
 
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import SearchIcon from "@mui/icons-material/Search";
+import { useQuery } from "@tanstack/react-query";
 import {
+  Alert,
   Avatar,
   Box,
   Card,
@@ -15,7 +17,8 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 import { normalizeOrderStatus } from "@/lib/order-status";
 
 type OrderHistoryItem = {
@@ -36,7 +39,7 @@ type OrderHistoryItem = {
 };
 
 type OrderHistoryListProps = {
-  orders: OrderHistoryItem[];
+  initialOrders: OrderHistoryItem[];
 };
 
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
@@ -58,32 +61,36 @@ const statusLabels: Record<string, string> = {
   CANCELLED: "Cancelled",
 };
 
-export function OrderHistoryList({ orders }: OrderHistoryListProps) {
+async function fetchOrders(query: string, signal: AbortSignal) {
+  const searchParams = new URLSearchParams();
+
+  if (query) {
+    searchParams.set("q", query);
+  }
+
+  const response = await fetch(`/api/orders?${searchParams.toString()}`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch orders.");
+  }
+
+  return (await response.json()) as OrderHistoryItem[];
+}
+
+export function OrderHistoryList({ initialOrders }: OrderHistoryListProps) {
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query.trim());
+  const ordersQuery = useQuery({
+    queryKey: ["orders", debouncedQuery],
+    queryFn: ({ signal }) => fetchOrders(debouncedQuery, signal),
+    initialData: debouncedQuery ? undefined : initialOrders,
+    placeholderData: (previousData) => previousData,
+  });
+  const orders = ordersQuery.data ?? [];
 
-  const filteredOrders = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-
-    if (!normalizedQuery) {
-      return orders;
-    }
-
-    return orders.filter((order) => {
-      const searchableText = [
-        order.id,
-        order.customer,
-        order.phone,
-        order.status,
-        ...order.items.map((item) => item.menuItem.name),
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      return searchableText.includes(normalizedQuery);
-    });
-  }, [orders, query]);
-
-  if (orders.length === 0) {
+  if (!debouncedQuery && orders.length === 0 && !ordersQuery.isFetching) {
     return (
       <Card elevation={0} sx={{ border: "1px dashed", borderColor: "divider" }}>
         <CardContent sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}>
@@ -118,8 +125,20 @@ export function OrderHistoryList({ orders }: OrderHistoryListProps) {
         }}
       />
 
+      {ordersQuery.isFetching ? (
+        <Typography color="text.secondary" variant="body2">
+          Searching orders...
+        </Typography>
+      ) : null}
+
+      {ordersQuery.isError ? (
+        <Alert severity="error" variant="outlined">
+          We could not load orders. Please try again.
+        </Alert>
+      ) : null}
+
       <Stack spacing={1.5}>
-        {filteredOrders.map((order) => {
+        {orders.map((order) => {
           const status = normalizeOrderStatus(order.status);
           const firstItem = order.items[0];
           const totalItems = order.items.reduce((total, item) => total + item.quantity, 0);
@@ -183,7 +202,7 @@ export function OrderHistoryList({ orders }: OrderHistoryListProps) {
         })}
       </Stack>
 
-      {filteredOrders.length === 0 ? (
+      {!ordersQuery.isError && orders.length === 0 ? (
         <Typography color="text.secondary" sx={{ textAlign: "center" }}>
           No orders match your search.
         </Typography>

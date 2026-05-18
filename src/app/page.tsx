@@ -27,5 +27,5 @@ export default async function Home({ searchParams }: HomeProps) {
     },
   });
 
-  return <MenuList items={menuItems} query={query} />;
+  return <MenuList initialItems={menuItems} initialQuery={query} />;
 }
