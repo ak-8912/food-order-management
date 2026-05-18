@@ -1,8 +1,11 @@
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { connection } from "next/server";
 import { OrderHistoryList } from "@/components/orders/order-history-list";
 import { prisma } from "@/lib/prisma";
 
 export default async function OrdersPage() {
+  await connection();
+
   const orders = await prisma.order.findMany({
     include: {
       items: {

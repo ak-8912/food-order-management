@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { OrderDetail, type OrderDetailData } from "@/components/orders/order-detail";
 import { prisma } from "@/lib/prisma";
 
@@ -9,6 +10,8 @@ type OrderPageProps = {
 };
 
 export default async function OrderPage({ params }: OrderPageProps) {
+  await connection();
+
   const { id } = await params;
   const orderId = Number(id);
 
