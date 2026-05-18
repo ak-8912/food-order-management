@@ -56,7 +56,9 @@ export function CheckoutForm({ onOrderCreated }: CheckoutFormProps) {
     });
 
     if (!response.ok) {
-      setError("We could not place this order. Please check the details and try again.");
+      setError(
+        "We could not place this order. Please check the details and try again."
+      );
       return;
     }
 
@@ -69,14 +71,19 @@ export function CheckoutForm({ onOrderCreated }: CheckoutFormProps) {
   });
 
   return (
-    <Stack component="form" spacing={1.5} onSubmit={submitOrder}>
+    <Stack component="form" noValidate spacing={1.5} onSubmit={submitOrder}>
       {error ? <Alert severity="error">{error}</Alert> : null}
       {success ? (
         <Alert
           severity="success"
           action={
             createdOrderId ? (
-              <Button component={Link} href={`/orders/${createdOrderId}`} color="inherit" size="small">
+              <Button
+                component={Link}
+                href={`/orders/${createdOrderId}`}
+                color="inherit"
+                size="small"
+              >
                 Track
               </Button>
             ) : null

@@ -45,3 +45,46 @@ export async function GET(_request: Request, context: OrderRouteContext) {
     );
   }
 }
+
+export async function DELETE(_request: Request, context: OrderRouteContext) {
+  try {
+    const { id } = await context.params;
+    const orderId = Number(id);
+
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return NextResponse.json({ error: "Invalid order id." }, { status: 400 });
+    }
+
+    const order = await prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order) {
+      return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    }
+
+    await prisma.$transaction([
+      prisma.orderItem.deleteMany({
+        where: {
+          orderId,
+        },
+      }),
+      prisma.order.delete({
+        where: {
+          id: orderId,
+        },
+      }),
+    ]);
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Failed to delete order", error);
+
+    return NextResponse.json(
+      { error: "Failed to delete order." },
+      { status: 500 }
+    );
+  }
+}
